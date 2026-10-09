@@ -24,7 +24,7 @@ npm.cmd install
 
 ## Environment variables
 
-Set `MONGODB_URI` to your MongoDB Atlas connection string, `MONGODB_DB_NAME` to your database name (for example, `ecommerce`), a long random `JWT_SECRET`, and your Cloudinary account credentials. `.env` is ignored by Git. Atlas connection strings include your database username and password; URL-encode special characters in the password and allow your server IP in Atlas Network Access.
+Set `MONGODB_URI` to your MongoDB Atlas connection string, `MONGODB_DB_NAME` to your database name (for example, `ecommerce`), a long random `JWT_SECRET`, your Cloudinary account credentials, and `BREVO_API_KEY` plus a verified `BREVO_SENDER_EMAIL`. `.env` is ignored by Git; keep the Brevo key private. Atlas connection strings include your database username and password; URL-encode special characters in the password and allow your server IP in Atlas Network Access.
 
 ## Database setup
 
@@ -47,14 +47,15 @@ npm.cmd start
 
 ## API documentation
 
-Open [http://localhost:5000/api-docs](http://localhost:5000/api-docs). Log in, copy the returned JWT, click **Authorize**, and enter the token. Swagger sends it as a Bearer token.
+Open [http://localhost:5000/api-docs](http://localhost:5000/api-docs). Start login, enter the code sent to the user's email in `/api/auth/login/verify`, then copy the returned JWT, click **Authorize**, and enter the token. Swagger sends it as a Bearer token.
 
 ## Endpoints
 
 | Method | Endpoint | Access | Description |
 | --- | --- | --- | --- |
-| POST | `/api/auth/register` | Public | Register a user |
-| POST | `/api/auth/login` | Public | Log in and get a JWT |
+| POST | `/api/auth/register` | Public | Register a user and send a welcome email |
+| POST | `/api/auth/login` | Public | Check password and email a one-time login code |
+| POST | `/api/auth/login/verify` | Public | Verify the code and get a JWT |
 | POST | `/api/products` | JWT required | Create a product; accepts multipart form data and optional `image` |
 | GET | `/api/products` | JWT required | List products |
 | GET | `/api/products/:id` | JWT required | Get one product |
@@ -71,8 +72,9 @@ Register
    ↓
 Password hashed with bcrypt
    ↓
-Login
+Login with email and password
    ↓
+Six-digit code emailed through Brevo (expires in 10 minutes), then submitted with challengeId to `/api/auth/login/verify`
 JWT generated
    ↓
 JWT sent with requests

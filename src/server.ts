@@ -7,7 +7,7 @@ async function startServer(): Promise<void> {
     await connectDatabase();
     console.log("Database connected successfully");
     const port = Number(process.env.PORT || 5000);
-    const server = app.listen(port, () => console.log(`Server running on port ${port}`));
+    const server = app.listen(port, "0.0.0.0", () => console.log(`Server running on port ${port}`));
     const shutdown = async () => {
       server.close(async () => {
         await closeDatabase();
